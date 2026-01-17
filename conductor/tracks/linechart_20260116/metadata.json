@@ -1,0 +1,8 @@
+{
+  "track_id": "linechart_20260116",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-01-16T00:00:00Z",
+  "updated_at": "2026-01-16T00:00:00Z",
+  "description": "在统计视图上增加基于时间的锻炼次数的折线图，如果当天没打卡，就计数为0，折线图按需选择方案"
+}

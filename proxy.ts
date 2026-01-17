@@ -5,10 +5,10 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Define paths that are public
-  const isPublicPath = 
-    pathname === "/auth" || 
+  const isPublicPath =
+    pathname === "/auth" ||
     pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/_next") || 
+    pathname.startsWith("/_next") ||
     pathname.includes("favicon.ico") ||
     pathname.includes(".svg") ||
     pathname.includes(".png") ||
@@ -17,15 +17,17 @@ export async function proxy(request: NextRequest) {
     pathname.includes("sw.js");
 
   // Check for the session token in cookies
-  // better-auth usually uses "better-auth.session_token"
-  const sessionCookie = request.cookies.get("better-auth.session_token");
+  // better-auth uses "better-auth.session_token" or "__Secure-better-auth.session_token" in prod
+  const sessionCookie =
+    request.cookies.get("better-auth.session_token") ||
+    request.cookies.get("__Secure-better-auth.session_token");
 
   if (!isPublicPath && !sessionCookie) {
     return NextResponse.redirect(new URL("/auth", request.url));
   }
 
   if (isPublicPath && sessionCookie && pathname === "/auth") {
-      return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();

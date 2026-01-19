@@ -342,7 +342,7 @@ export default function SummaryPage() {
                 {selectedDayStat.sessions.map((session) => (
                   <div
                     key={session.id}
-                    className="flex justify-between items-center p-3 rounded-xl bg-black/5"
+                    className="flex justify-between items-center p-3 rounded-xl bg-white/60 dark:bg-white/5 border border-white/20 shadow-sm backdrop-blur-sm"
                   >
                     <div className="flex flex-col">
                       <span className="text-[var(--foreground)] font-bold text-lg">
@@ -352,7 +352,7 @@ export default function SummaryPage() {
                         {new Date(session.created_at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
-                    <div className="text-xs font-mono text-[var(--muted)] bg-white/50 px-2 py-1 rounded">
+                    <div className="text-xs font-mono text-[var(--primary)] bg-[var(--primary)]/10 px-2 py-1 rounded">
                       {session.duration}s
                     </div>
                   </div>

@@ -1,13 +1,13 @@
 # Project Overview
 
-This is a Next.js (v16.1.2) application designed for the Chinese market ("push-up-daily"), featuring a secure authentication system built with `better-auth`, a MySQL database, and a comprehensive statistics dashboard for tracking push-up progress over time. The UI is styled with Tailwind CSS v4 and is fully localized in Chinese.
+This is a Next.js (v16.1.2) application designed for the Chinese market ("push-up-daily"), featuring a secure authentication system built with `better-auth`, a PostgreSQL database, and a comprehensive statistics dashboard for tracking push-up progress over time. The UI is styled with Tailwind CSS v4 and is fully localized in Chinese.
 
 ## Key Technologies
 
 *   **Framework:** Next.js 16.1.2 (App Router)
 *   **Authentication:** `better-auth` (v1.4.13)
     *   **Plugins:** `username` (enables username/password login alongside email)
-    *   **Database:** `mysql2` (MySQL connection pool)
+    *   **Database:** `pg` (PostgreSQL connection pool)
 *   **Styling:** Tailwind CSS v4
 *   **Visualization:** `recharts` (Charts & Graphs)
 *   **Testing:** Jest, React Testing Library
@@ -17,7 +17,7 @@ This is a Next.js (v16.1.2) application designed for the Chinese market ("push-u
 
 ## Architecture
 
-*   **`lib/db.ts`**: Centralized MySQL connection pool using `mysql2/promise`. Shared across authentication and business logic.
+*   **`lib/db.ts`**: Centralized PostgreSQL connection pool using `pg`. Shared across business logic.
 *   **`app/auth.ts`**: Server-side Better Auth configuration. Uses the shared pool from `lib/db.ts`.
 *   **`app/api/auth/[...all]/route.ts`**: Exposes Better Auth endpoints.
 *   **`lib/auth-client.ts`**: Client-side Better Auth instance.
@@ -40,7 +40,7 @@ This is a Next.js (v16.1.2) application designed for the Chinese market ("push-u
 
 ### Prerequisites
 *   Node.js (v20+ recommended)
-*   MySQL Database (configured in `.env.local`)
+*   PostgreSQL Database (configured in `.env.local`)
 
 ### Commands
 
@@ -50,7 +50,7 @@ This is a Next.js (v16.1.2) application designed for the Chinese market ("push-u
 *   **Testing:** `npm run test`
 *   **Database Setup:**
     1. Better Auth tables: `npm run db:migrate` (or `npx @better-auth/cli migrate`)
-    2. Business tables: `mysql -u <user> -p <db> < scripts/init-pushup-db.sql`
+    2. Business tables: `psql "$DATABASE_URL" -f scripts/init-pushup-db.sql`
 
 ## Data Schema
 

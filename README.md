@@ -14,7 +14,7 @@
 
 - **框架**: [Next.js 16.1.2](https://nextjs.org/) (App Router)
 - **样式**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **数据库**: MySQL (使用 `mysql2` 连接池)
+- **数据库**: PostgreSQL (使用 `pg` 连接池)
 - **认证**: [Better Auth](https://better-auth.com/)
 - **图表**: [Recharts](https://recharts.org/)
 - **语言**: TypeScript
@@ -24,7 +24,7 @@
 ### 前置要求
 
 - Node.js (建议 v20+)
-- MySQL 数据库
+- PostgreSQL 数据库
 
 ### 1. 克隆项目
 
@@ -44,9 +44,13 @@ npm install
 在项目根目录创建 `.env.local` 文件，并填写以下配置：
 
 ```env
-# 数据库配置
+# 数据库配置（推荐）
+DATABASE_URL=postgres://postgres:your_password@localhost:5432/pushup_daily
+
+# 可选：分项配置（若不使用 DATABASE_URL）
 DB_HOST=localhost
-DB_USER=root
+DB_PORT=5432
+DB_USER=postgres
 DB_PASSWORD=your_password
 DB_NAME=pushup_daily
 
@@ -64,8 +68,8 @@ BETTER_AUTH_URL=http://localhost:3000
 npm run db:migrate
 
 # 2. 导入业务数据表
-# 请根据你的数据库配置替换 <user> 和 <db_name>
-mysql -u root -p pushup_daily < scripts/init-pushup-db.sql
+# 请根据你的数据库配置替换连接参数
+psql "$DATABASE_URL" -f scripts/init-pushup-db.sql
 ```
 
 ### 5. 启动开发服务器

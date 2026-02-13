@@ -18,6 +18,21 @@ export type DailyStat = {
     sessions: PushupSession[];
 }
 
+const BUSINESS_TIMEZONE = "Asia/Shanghai";
+
+type MonthlySessionRow = {
+    id: number;
+    count: number;
+    duration: number;
+    created_at: Date;
+    date_str: string;
+};
+
+type CountByDateRow = {
+    count: number;
+    date_str: string;
+};
+
 export async function getMonthlyPushups(year: number, month: number) {
     const session = await auth.api.getSession({
         headers: await headers()
@@ -28,12 +43,12 @@ export async function getMonthlyPushups(year: number, month: number) {
     }
 
     // month is 1-12
-    const [rows] = await db.query<any[]>(
-        `SELECT id, count, duration, created_at, DATE_FORMAT(created_at, '%Y-%m-%d') as date_str
+    const rows = await db.query<MonthlySessionRow>(
+        `SELECT id, count, duration, created_at, TO_CHAR(created_at AT TIME ZONE 'Asia/Shanghai', 'YYYY-MM-DD') AS date_str
          FROM pushup_sessions 
-         WHERE user_id = ? 
-         AND YEAR(created_at) = ? 
-         AND MONTH(created_at) = ?
+         WHERE user_id = $1 
+         AND EXTRACT(YEAR FROM created_at AT TIME ZONE 'Asia/Shanghai') = $2 
+         AND EXTRACT(MONTH FROM created_at AT TIME ZONE 'Asia/Shanghai') = $3
          ORDER BY created_at DESC`,
         [session.user.id, year, month]
     );
@@ -71,11 +86,11 @@ export async function getYearlyPushups(year: number) {
         throw new Error("Unauthorized");
     }
 
-    const [rows] = await db.query<any[]>(
-        `SELECT count, DATE_FORMAT(created_at, '%Y-%m-%d') as date_str
+    const rows = await db.query<CountByDateRow>(
+        `SELECT count, TO_CHAR(created_at AT TIME ZONE 'Asia/Shanghai', 'YYYY-MM-DD') AS date_str
          FROM pushup_sessions 
-         WHERE user_id = ? 
-         AND YEAR(created_at) = ?`,
+         WHERE user_id = $1 
+         AND EXTRACT(YEAR FROM created_at AT TIME ZONE 'Asia/Shanghai') = $2`,
         [session.user.id, year]
     );
 
@@ -102,19 +117,22 @@ export async function getRecentPushups(days: number = 30) {
     }
 
     // Calculate start date (inclusive of today)
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
+    const todayDateStr = new Intl.DateTimeFormat("en-CA", {
+        timeZone: BUSINESS_TIMEZONE
+    }).format(new Date());
+    const today = new Date(`${todayDateStr}T00:00:00Z`);
     
     const startDate = new Date(today);
     startDate.setUTCDate(today.getUTCDate() - (days - 1));
+    const startDateStr = startDate.toISOString().split('T')[0];
 
-    const [rows] = await db.query<any[]>(
-        `SELECT count, DATE_FORMAT(created_at, '%Y-%m-%d') as date_str
+    const rows = await db.query<CountByDateRow>(
+        `SELECT count, TO_CHAR(created_at AT TIME ZONE 'Asia/Shanghai', 'YYYY-MM-DD') AS date_str
          FROM pushup_sessions 
-         WHERE user_id = ? 
-         AND created_at >= ?
+         WHERE user_id = $1 
+         AND (created_at AT TIME ZONE 'Asia/Shanghai')::date >= $2::date
          ORDER BY created_at ASC`,
-        [session.user.id, startDate]
+        [session.user.id, startDateStr]
     );
 
     const stats: Record<string, number> = {};

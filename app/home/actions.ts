@@ -14,7 +14,7 @@ export async function savePushupSession(count: number, duration: number) {
     }
 
     await db.query(
-        'INSERT INTO pushup_sessions (user_id, count, duration) VALUES (?, ?, ?)',
+        'INSERT INTO pushup_sessions (user_id, count, duration) VALUES ($1, $2, $3)',
         [session.user.id, count, duration]
     );
 

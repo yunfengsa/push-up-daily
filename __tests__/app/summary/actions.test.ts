@@ -1,7 +1,6 @@
 import { getYearlyPushups, getRecentPushups } from '@/app/summary/actions';
 import { auth } from "@/app/auth";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 
 jest.mock("@/app/auth", () => ({
     auth: {
@@ -32,7 +31,7 @@ describe('getYearlyPushups', () => {
             { date_str: '2026-01-16', count: 5 } // Multiple entries for same day
         ];
         
-        (db.query as jest.Mock).mockResolvedValue([mockRows, undefined]);
+        (db.query as jest.Mock).mockResolvedValue(mockRows);
 
         const result = await getYearlyPushups(2026);
 
@@ -69,7 +68,7 @@ describe('getRecentPushups', () => {
             { date_str: '2026-01-16', count: 10 },
             { date_str: '2026-01-14', count: 5 }
         ];
-        (db.query as jest.Mock).mockResolvedValue([mockRows, undefined]);
+        (db.query as jest.Mock).mockResolvedValue(mockRows);
 
         // Fix the system time to ensure stable tests
         // 2026-01-16

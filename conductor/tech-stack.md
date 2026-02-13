@@ -10,8 +10,8 @@
 *   **Next.js Middleware (proxy.ts)**: 实现路由保护和未授权重定向。
 
 ## 数据存储 (Data Storage)
-*   **MySQL**: 作为主关系型数据库。
-*   **mysql2**: 使用其 Promise 接口的连接池管理，确保数据库操作的效率和稳定性。
+*   **PostgreSQL**: 作为主关系型数据库。
+*   **pg**: 使用其连接池管理，确保数据库操作的效率和稳定性。
 *   **server-only**: 关键的数据库逻辑和敏感连接信息通过 `server-only` 库进行物理隔离，防止泄露到客户端。
 
 ## UI 与样式 (UI & Styling)
